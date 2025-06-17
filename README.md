@@ -92,14 +92,83 @@ Add to your Roo configuration:
 }
 ```
 
-### 4. Get Your Rezdy Agent API Key
+### 4. Docker Deployment (Alternative)
+
+For containerized deployment, you can use Docker:
+
+#### Option A: Docker Compose (Recommended)
+
+1. Clone the repository:
+```bash
+git clone https://github.com/jezweb/rezdy-agent-mcp.git
+cd rezdy-agent-mcp
+```
+
+2. Create a `.env` file:
+```bash
+REZDY_API_KEY=your-agent-api-key-here
+REZDY_ENVIRONMENT=production
+```
+
+3. Start the container:
+```bash
+npm run docker:compose:up
+```
+
+4. For Claude Desktop, use the Docker container path:
+```json
+{
+  "mcpServers": {
+    "rezdy-agent": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "rezdy-agent-mcp",
+        "node",
+        "build/index.js"
+      ]
+    }
+  }
+}
+```
+
+#### Option B: Docker Build & Run
+
+```bash
+# Build the Docker image
+npm run docker:build
+
+# Run the container
+docker run --rm -it \
+  -e REZDY_API_KEY=your-api-key \
+  -e REZDY_ENVIRONMENT=production \
+  rezdy-agent-mcp
+```
+
+#### Docker Management Commands
+
+```bash
+# Start services
+npm run docker:compose:up
+
+# Stop services
+npm run docker:compose:down
+
+# View logs
+npm run docker:compose:logs
+
+# Rebuild container
+npm run docker:compose:build
+```
+
+### 5. Get Your Rezdy Agent API Key
 
 1. Log into your Rezdy Agent account
 2. Go to Settings > API Keys
 3. Create a new Agent API key
 4. Copy the API key for configuration
 
-### 5. Configure the Server
+### 6. Configure the Server
 
 Once connected, configure the server with your Rezdy Agent credentials:
 

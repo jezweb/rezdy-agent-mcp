@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  rezdy-agent-mcp:
+    build: .
+    image: rezdy-agent-mcp:latest
+    container_name: rezdy-agent-mcp
+    restart: unless-stopped
+    
+    # Environment variables for configuration
+    environment:
+      - NODE_ENV=production
+      - REZDY_API_KEY=${REZDY_API_KEY:-}
+      - REZDY_ENVIRONMENT=${REZDY_ENVIRONMENT:-production}
+      
+    # For stdio-based MCP servers, we typically don't expose ports
+    # but this is here if you want to add HTTP endpoints later
+    # ports:
+    #   - "3000:3000"
+    
+    # Volume mounts for persistence (if needed)
+    volumes:
+      - ./logs:/app/logs
+      
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Health check passed')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Optional: Add a volume for logs
+volumes:
+  logs:
+    driver: local

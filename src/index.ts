@@ -488,7 +488,22 @@ class RezdyAgentServer {
   }
 
   private async handleConfigure(args: any) {
-    const config = RezdyAgentConfigSchema.parse(args);
+    // Allow configuration from environment variables if not provided in args
+    const configData = {
+      apiKey: args.apiKey || process.env.REZDY_API_KEY,
+      environment: args.environment || process.env.REZDY_ENVIRONMENT || 'production',
+      baseUrl: process.env.REZDY_BASE_URL,
+      stagingUrl: process.env.REZDY_STAGING_URL,
+    };
+
+    // Remove undefined values
+    Object.keys(configData).forEach(key => {
+      if (configData[key as keyof typeof configData] === undefined) {
+        delete configData[key as keyof typeof configData];
+      }
+    });
+
+    const config = RezdyAgentConfigSchema.parse(configData);
     this.rezdyClient = new RezdyAgentClient(config);
     
     return {
